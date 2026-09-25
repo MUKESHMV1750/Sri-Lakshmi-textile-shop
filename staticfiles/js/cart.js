@@ -35,7 +35,8 @@ function initAddToCart() {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
-                'X-CSRFToken': getCsrfToken()
+                'X-CSRFToken': getCsrfToken(),
+                'X-Requested-With': 'XMLHttpRequest'
             },
             body: `product_id=${productId}&quantity=${quantity}&size=${encodeURIComponent(size)}&color=${encodeURIComponent(color)}`
         })
@@ -63,13 +64,11 @@ function initAddToCart() {
 
 // Cart Quantity Controls (+ / - and removal)
 function initQuantityControls() {
-    const cartContainer = document.querySelector('.cart-section');
-    if (!cartContainer) return;
-
-    cartContainer.addEventListener('click', function (e) {
+    document.body.addEventListener('click', function (e) {
         // Quantity Plus / Minus buttons
         const qtyBtn = e.target.closest('.qty-btn');
         if (qtyBtn) {
+            e.preventDefault();
             const itemId = qtyBtn.dataset.itemId;
             const input = qtyBtn.parentElement.querySelector('.cart-qty-input');
             let currentQty = parseInt(input.value) || 1;
@@ -95,7 +94,7 @@ function initQuantityControls() {
     });
 
     // Quantity Direct Change Input
-    cartContainer.addEventListener('change', function (e) {
+    document.body.addEventListener('change', function (e) {
         if (e.target.classList.contains('cart-qty-input')) {
             const itemId = e.target.dataset.itemId;
             let qty = parseInt(e.target.value) || 1;
@@ -112,13 +111,14 @@ function updateCartItem(itemId, quantity) {
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
-            'X-CSRFToken': getCsrfToken()
+            'X-CSRFToken': getCsrfToken(),
+            'X-Requested-With': 'XMLHttpRequest'
         },
         body: `item_id=${itemId}&quantity=${quantity}`
     })
     .then(res => res.json())
     .then(data => {
-        if (data.status === 'success') {
+        if (data.success || data.status === 'success') {
             // Update row item total
             const itemRow = document.querySelector(`.cart-item-row[data-item-id="${itemId}"]`);
             if (itemRow && data.item_total !== undefined) {
@@ -128,6 +128,9 @@ function updateCartItem(itemId, quantity) {
 
             // Update cart summary totals
             updateCartSummary(data);
+            if (data.cart_count !== undefined) {
+                updateBadge('#cartBadge, .cart-count', data.cart_count);
+            }
             showToast('Cart updated', 'info');
         } else {
             showToast(data.message || 'Failed to update quantity', 'error');
@@ -144,13 +147,14 @@ function removeCartItem(itemId) {
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
-            'X-CSRFToken': getCsrfToken()
+            'X-CSRFToken': getCsrfToken(),
+            'X-Requested-With': 'XMLHttpRequest'
         },
         body: `item_id=${itemId}`
     })
     .then(res => res.json())
     .then(data => {
-        if (data.status === 'success') {
+        if (data.success || data.status === 'success') {
             const itemRow = document.querySelector(`.cart-item-row[data-item-id="${itemId}"]`);
             if (itemRow) {
                 itemRow.style.opacity = '0';
@@ -196,15 +200,16 @@ function initCouponForm() {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
-                'X-CSRFToken': getCsrfToken()
+                'X-CSRFToken': getCsrfToken(),
+                'X-Requested-With': 'XMLHttpRequest'
             },
             body: `coupon_code=${encodeURIComponent(code)}`
         })
         .then(res => res.json())
         .then(data => {
-            if (data.status === 'success') {
+            if (data.success || data.status === 'success') {
                 showToast(data.message || 'Coupon applied successfully!', 'success');
-                setTimeout(() => window.location.reload(), 800);
+                updateCartSummary(data);
             } else {
                 showToast(data.message || 'Invalid coupon code', 'error');
             }
@@ -225,12 +230,9 @@ function updateCartSummary(data) {
         const discountElem = document.querySelector('#cart-discount');
         if (discountElem) discountElem.textContent = `-₹${data.discount}`;
     }
-    if (data.tax !== undefined) {
-        const taxElem = document.querySelector('#cart-tax');
-        if (taxElem) taxElem.textContent = `₹${data.tax}`;
-    }
-    if (data.grand_total !== undefined) {
+    if (data.grand_total !== undefined || data.total !== undefined) {
         const grandTotalElem = document.querySelector('#cart-grand-total');
-        if (grandTotalElem) grandTotalElem.textContent = `₹${data.grand_total}`;
+        const val = data.grand_total !== undefined ? data.grand_total : data.total;
+        if (grandTotalElem) grandTotalElem.textContent = `₹${val}`;
     }
 }
