@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Payment Failed | LoomLuxe{% endblock %}
+
+{% block content %}
+<section class="max-w-md mx-auto px-4 py-16 text-center">
+    <div class="bg-white p-10 rounded-3xl border border-gray-100 shadow-xl space-y-6">
+        <div class="w-20 h-20 bg-red-100 text-red-600 rounded-full flex items-center justify-center text-4xl mx-auto">
+            <i class="fa-solid fa-circle-xmark"></i>
+        </div>
+        <h1 class="text-3xl font-extrabold tracking-tight text-black">Payment Failed</h1>
+        <p class="text-gray-500 text-sm">We were unable to process your payment transaction. Please try again or choose a different payment method.</p>
+
+        <div class="pt-4 space-y-3">
+            <a href="{% url 'cart' %}" class="block w-full bg-black text-white py-3.5 rounded-xl font-bold text-xs shadow-md">Return to Shopping Cart</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

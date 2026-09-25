@@ -1,0 +1,37 @@
+{% extends 'dashboard/admin_base.html' %}
+
+{% block title %}Customers Directory{% endblock %}
+{% block header_title %}Registered Customers{% endblock %}
+
+{% block content %}
+<div class="bg-white rounded-3xl shadow-sm border border-gray-200 overflow-hidden">
+    <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs">
+            <thead class="bg-gray-50 uppercase text-gray-400 font-bold border-b border-gray-100">
+                <tr>
+                    <th class="p-4">Customer Name</th>
+                    <th class="p-4">Email</th>
+                    <th class="p-4">Phone</th>
+                    <th class="p-4">Total Orders</th>
+                    <th class="p-4">Total Spent</th>
+                    <th class="p-4">Joined Date</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+                {% for customer in customers %}
+                <tr class="hover:bg-gray-50 transition-colors">
+                    <td class="p-4 font-bold text-black">{{ customer.get_full_name|default:customer.username }}</td>
+                    <td class="p-4 text-gray-500">{{ customer.email }}</td>
+                    <td class="p-4 text-gray-500">{{ customer.phone|default:"N/A" }}</td>
+                    <td class="p-4 font-bold text-black">{{ customer.order_count }}</td>
+                    <td class="p-4 font-bold text-black">₹{{ customer.total_spent|default:0 }}</td>
+                    <td class="p-4 text-gray-500">{{ customer.date_joined|date:"M d, Y" }}</td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="6" class="p-8 text-center text-gray-400">No registered customers.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

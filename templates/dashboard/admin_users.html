@@ -1,0 +1,141 @@
+{% extends 'dashboard/admin_base.html' %}
+
+{% block title %}User & Role Management{% endblock %}
+{% block header_title %}User Management & Role Permissions{% endblock %}
+
+{% block content %}
+<!-- Top Header Actions -->
+<div class="flex flex-col sm:flex-row justify-between sm:items-center gap-4 mb-6">
+    <span class="text-xs font-semibold text-gray-500">{{ users_list|length }} total user{{ users_list|length|pluralize }} in directory</span>
+    <button onclick="toggleAddUserModal()" class="bg-black text-white text-xs font-bold px-5 py-3 rounded-xl hover:bg-gray-800 transition-all flex items-center justify-center space-x-2 shadow-md">
+        <i class="fa-solid fa-user-plus"></i><span>Add New User</span>
+    </button>
+</div>
+
+<!-- Add User Modal -->
+<div id="add-user-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl space-y-6 relative animate-zoom">
+        <div class="flex justify-between items-center border-b pb-4">
+            <h3 class="font-extrabold text-lg">Create New User</h3>
+            <button onclick="toggleAddUserModal()" class="text-gray-400 hover:text-black p-1"><i class="fa-solid fa-xmark text-lg"></i></button>
+        </div>
+        <form method="POST" action="{% url 'admin_add_user' %}" class="space-y-4">
+            {% csrf_token %}
+            <div>
+                <label class="block text-xs font-bold uppercase text-gray-500 mb-1">Username</label>
+                <input type="text" name="username" required placeholder="john_doe" class="w-full border rounded-xl px-4 py-2.5 text-xs font-bold focus:outline-none focus:border-black">
+            </div>
+            <div>
+                <label class="block text-xs font-bold uppercase text-gray-500 mb-1">Email Address</label>
+                <input type="email" name="email" required placeholder="john@example.com" class="w-full border rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:border-black">
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-xs font-bold uppercase text-gray-500 mb-1">First Name</label>
+                    <input type="text" name="first_name" placeholder="John" class="w-full border rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-black">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase text-gray-500 mb-1">Last Name</label>
+                    <input type="text" name="last_name" placeholder="Doe" class="w-full border rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-black">
+                </div>
+            </div>
+            <div>
+                <label class="block text-xs font-bold uppercase text-gray-500 mb-1">User Role</label>
+                <select name="role" class="w-full border rounded-xl px-4 py-2.5 text-xs font-semibold focus:outline-none focus:border-black">
+                    <option value="customer">Customer</option>
+                    <option value="admin">Administrator / Staff</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-xs font-bold uppercase text-gray-500 mb-1">Password</label>
+                <input type="password" name="password" required placeholder="••••••••" class="w-full border rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:border-black">
+            </div>
+            <div class="flex space-x-3 pt-4 border-t border-gray-100">
+                <button type="submit" class="flex-1 bg-black text-white py-3 rounded-xl font-bold text-xs shadow-md">Create User</button>
+                <button type="button" onclick="toggleAddUserModal()" class="bg-gray-100 text-gray-700 px-5 py-3 rounded-xl font-bold text-xs">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="bg-white rounded-3xl shadow-sm border border-gray-200 overflow-hidden">
+    <div class="p-6 border-b border-gray-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+            <h3 class="font-extrabold text-lg text-black">User Directory</h3>
+            <p class="text-xs text-gray-500">Manage user accounts, toggle admin privileges, or remove users</p>
+        </div>
+    </div>
+
+    <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs">
+            <thead class="bg-gray-50 uppercase text-gray-400 font-bold border-b border-gray-100">
+                <tr>
+                    <th class="p-4">User</th>
+                    <th class="p-4">Email</th>
+                    <th class="p-4">Current Role</th>
+                    <th class="p-4">Date Joined</th>
+                    <th class="p-4">Change Role</th>
+                    <th class="p-4 text-right">Delete</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+                {% for u in users_list %}
+                <tr class="hover:bg-gray-50 transition-colors">
+                    <td class="p-4 font-bold text-black flex items-center space-x-3">
+                        <div class="w-9 h-9 rounded-full bg-gray-200 flex items-center justify-center font-extrabold text-gray-700 text-xs uppercase">
+                            {{ u.username|slice:":2" }}
+                        </div>
+                        <div>
+                            <span class="block font-bold text-black">{{ u.get_full_name|default:u.username }}</span>
+                            <span class="text-[10px] text-gray-400">@{{ u.username }}</span>
+                        </div>
+                    </td>
+                    <td class="p-4 text-gray-600 font-medium">{{ u.email }}</td>
+                    <td class="p-4">
+                        <span class="px-3 py-1 rounded-full font-bold uppercase text-[10px] {% if u.is_staff %}bg-purple-100 text-purple-800 border border-purple-200{% else %}bg-blue-100 text-blue-800 border border-blue-200{% endif %}">
+                            <i class="fa-solid {% if u.is_staff %}fa-user-shield{% else %}fa-user{% endif %} mr-1"></i>
+                            {% if u.is_staff %}Admin / Staff{% else %}Customer{% endif %}
+                        </span>
+                    </td>
+                    <td class="p-4 text-gray-500">{{ u.date_joined|date:"M d, Y" }}</td>
+                    <td class="p-4">
+                        {% if u == request.user %}
+                        <span class="text-[11px] font-semibold text-gray-400 italic">Current Session</span>
+                        {% else %}
+                        <form method="POST" action="{% url 'admin_toggle_user_role' u.id %}" class="flex items-center space-x-2">
+                            {% csrf_token %}
+                            <select name="role" class="bg-gray-50 border border-gray-200 rounded-lg px-2 py-1 text-xs font-semibold focus:outline-none">
+                                <option value="customer" {% if not u.is_staff %}selected{% endif %}>Customer</option>
+                                <option value="admin" {% if u.is_staff %}selected{% endif %}>Admin</option>
+                            </select>
+                            <button type="submit" class="bg-black hover:bg-gray-800 text-white px-3 py-1 rounded-lg text-xs font-bold transition-all shadow-sm">
+                                Save
+                            </button>
+                        </form>
+                        {% endif %}
+                    </td>
+                    <td class="p-4 text-right">
+                        {% if u == request.user %}
+                        <span class="text-gray-300">-</span>
+                        {% else %}
+                        <a href="{% url 'admin_delete_user' u.id %}" onclick="return confirm('Are you sure you want to delete user {{ u.username }}?')" title="Delete User" class="w-8 h-8 rounded-xl bg-red-50 text-red-600 hover:bg-red-600 hover:text-white inline-flex items-center justify-center transition-all">
+                            <i class="fa-solid fa-trash text-xs"></i>
+                        </a>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="6" class="p-8 text-center text-gray-400">No users found.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    function toggleAddUserModal() {
+        const modal = document.getElementById('add-user-modal');
+        modal.classList.toggle('hidden');
+    }
+</script>
+{% endblock %}

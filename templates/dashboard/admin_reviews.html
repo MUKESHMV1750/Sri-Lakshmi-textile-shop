@@ -1,0 +1,50 @@
+{% extends 'dashboard/admin_base.html' %}
+
+{% block title %}Reviews Moderation{% endblock %}
+{% block header_title %}Customer Reviews Moderation{% endblock %}
+
+{% block content %}
+<div class="bg-white rounded-3xl shadow-sm border border-gray-200 overflow-hidden">
+    <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs">
+            <thead class="bg-gray-50 uppercase text-gray-400 font-bold border-b border-gray-100">
+                <tr>
+                    <th class="p-4">Product</th>
+                    <th class="p-4">User</th>
+                    <th class="p-4">Rating</th>
+                    <th class="p-4">Review Title / Comment</th>
+                    <th class="p-4">Date</th>
+                    <th class="p-4">Approved</th>
+                    <th class="p-4">Action</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+                {% for review in reviews %}
+                <tr class="hover:bg-gray-50 transition-colors">
+                    <td class="p-4 font-bold text-black">{{ review.product.name }}</td>
+                    <td class="p-4 font-medium">{{ review.user.get_full_name|default:review.user.email }}</td>
+                    <td class="p-4 font-bold text-amber-500"><i class="fa-solid fa-star text-xs"></i> {{ review.rating }}/5</td>
+                    <td class="p-4">
+                        {% if review.title %}<span class="font-bold block text-black">{{ review.title }}</span>{% endif %}
+                        <span class="text-gray-500 line-clamp-2">{{ review.comment }}</span>
+                    </td>
+                    <td class="p-4 text-gray-500">{{ review.created_at|date:"M d, Y" }}</td>
+                    <td class="p-4">
+                        <span class="px-2.5 py-1 rounded-full font-bold uppercase text-[10px] {% if review.is_approved %}bg-emerald-100 text-emerald-800{% else %}bg-amber-100 text-amber-800{% endif %}">
+                            {% if review.is_approved %}Approved{% else %}Pending{% endif %}
+                        </span>
+                    </td>
+                    <td class="p-4">
+                        <a href="{% url 'admin_toggle_review' review.id %}" class="font-bold {% if review.is_approved %}text-red-600{% else %}text-emerald-700{% endif %} hover:underline">
+                            {% if review.is_approved %}Unapprove{% else %}Approve{% endif %}
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="7" class="p-8 text-center text-gray-400">No customer reviews found.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

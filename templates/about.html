@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}About Our Story | LoomLuxe{% endblock %}
+
+{% block content %}
+<section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <div class="bg-gray-900 text-white rounded-3xl p-8 sm:p-16 mb-16 text-center relative overflow-hidden shadow-xl">
+        <span class="text-xs font-bold uppercase tracking-widest text-gray-400 mb-2 block">The LoomLuxe Story</span>
+        <h1 class="text-4xl sm:text-5xl font-extrabold tracking-tight mb-4">Crafted Threads, Timeless Style</h1>
+        <p class="text-gray-300 text-base max-w-2xl mx-auto leading-relaxed">
+            Founded with a vision to preserve traditional handloom weaves while modernizing technical apparel, LoomLuxe connects master weavers directly with global fashion connoisseurs.
+        </p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+        <div class="bg-gray-50 p-8 rounded-3xl border border-gray-100 space-y-3">
+            <i class="fa-solid fa-gem text-2xl text-black"></i>
+            <h3 class="font-bold text-lg">Uncompromising Quality</h3>
+            <p class="text-xs text-gray-500 leading-relaxed">We source 100% pure mulberry silk, organic handblock cotton, and high-performance technical flax linen.</p>
+        </div>
+        <div class="bg-gray-50 p-8 rounded-3xl border border-gray-100 space-y-3">
+            <i class="fa-solid fa-hands-holding-child text-2xl text-black"></i>
+            <h3 class="font-bold text-lg">Artisan Empowerment</h3>
+            <p class="text-xs text-gray-500 leading-relaxed">Every piece supports local weaver clusters across Tamil Nadu, Varanasi, Rajasthan, and West Bengal.</p>
+        </div>
+        <div class="bg-gray-50 p-8 rounded-3xl border border-gray-100 space-y-3">
+            <i class="fa-solid fa-leaf text-2xl text-black"></i>
+            <h3 class="font-bold text-lg">Sustainable Practices</h3>
+            <p class="text-xs text-gray-500 leading-relaxed">Natural vegetable dyes, zero-waste cutting patterns, and eco-friendly biodegradable packaging.</p>
+        </div>
+    </div>
+</section>
+{% endblock %}

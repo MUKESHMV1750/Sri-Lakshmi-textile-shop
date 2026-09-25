@@ -1,0 +1,72 @@
+{% extends 'dashboard/admin_base.html' %}
+
+{% block title %}Categories Management{% endblock %}
+{% block header_title %}Product Categories Management{% endblock %}
+
+{% block content %}
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-200 h-fit space-y-4">
+        <h3 class="font-extrabold text-base">Add New Category</h3>
+        <form method="POST" action="{% url 'admin_categories' %}" enctype="multipart/form-data" class="space-y-4">
+            {% csrf_token %}
+            <div>
+                <label class="block text-xs font-bold uppercase text-gray-500 mb-1">Category Name</label>
+                <input type="text" name="name" required placeholder="Silk Sarees" class="w-full border rounded-xl px-4 py-2.5 text-xs font-bold focus:outline-none focus:border-black">
+            </div>
+            <div>
+                <label class="block text-xs font-bold uppercase text-gray-500 mb-1">Parent Category (Optional)</label>
+                <select name="parent" class="w-full border rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:border-black">
+                    <option value="">None (Top Level)</option>
+                    {% for cat in categories %}
+                    <option value="{{ cat.id }}">{{ cat.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div>
+                <label class="block text-xs font-bold uppercase text-gray-500 mb-1">Description</label>
+                <textarea name="description" rows="3" placeholder="Category summary..." class="w-full border rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:border-black"></textarea>
+            </div>
+            <button type="submit" class="w-full bg-black text-white py-3 rounded-xl font-bold text-xs shadow-md">Add Category</button>
+        </form>
+    </div>
+
+    <div class="lg:col-span-2 bg-white rounded-3xl shadow-sm border border-gray-200 overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+                <thead class="bg-gray-50 uppercase text-gray-400 font-bold border-b border-gray-100">
+                    <tr>
+                        <th class="p-4">Name</th>
+                        <th class="p-4">Slug</th>
+                        <th class="p-4">Parent Category</th>
+                        <th class="p-4">Products</th>
+                        <th class="p-4">Status</th>
+                        <th class="p-4 text-right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100">
+                    {% for cat in categories %}
+                    <tr class="hover:bg-gray-50 transition-colors">
+                        <td class="p-4 font-bold text-black">{{ cat.name }}</td>
+                        <td class="p-4 font-mono text-gray-500">{{ cat.slug }}</td>
+                        <td class="p-4 font-medium text-gray-600">{{ cat.parent.name|default:"Top Level" }}</td>
+                        <td class="p-4 font-bold text-black">{{ cat.products.count }}</td>
+                        <td class="p-4">
+                            <span class="px-2.5 py-1 rounded-full font-bold uppercase text-[10px] {% if cat.is_active %}bg-emerald-100 text-emerald-800{% else %}bg-gray-100 text-gray-800{% endif %}">
+                                {% if cat.is_active %}Active{% else %}Inactive{% endif %}
+                            </span>
+                        </td>
+                        <td class="p-4 text-right">
+                            <a href="{% url 'admin_delete_category' cat.id %}" onclick="return confirm('Are you sure you want to delete category {{ cat.name }}?')" title="Delete Category" class="w-8 h-8 rounded-xl bg-red-50 text-red-600 hover:bg-red-600 hover:text-white inline-flex items-center justify-center transition-all">
+                                <i class="fa-solid fa-trash text-xs"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="6" class="p-8 text-center text-gray-400">No categories found.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

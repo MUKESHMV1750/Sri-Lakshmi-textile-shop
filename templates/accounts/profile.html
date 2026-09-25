@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Edit Profile | LoomLuxe{% endblock %}
+
+{% block content %}
+<section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+        <aside class="bg-gray-50 p-6 rounded-3xl border border-gray-100 h-fit space-y-6">
+            <div class="text-center pb-6 border-b border-gray-200">
+                <div class="w-20 h-20 bg-black text-white font-black text-2xl rounded-full flex items-center justify-center mx-auto mb-3">
+                    {{ user.first_name|first|default:user.username|first|upper }}
+                </div>
+                <h3 class="font-bold text-base text-black">{{ user.get_full_name|default:user.username }}</h3>
+                <span class="text-xs text-gray-400">{{ user.email }}</span>
+            </div>
+            <nav class="space-y-1 font-medium text-xs">
+                <a href="{% url 'my_account' %}" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-600 hover:bg-gray-100 transition-all"><i class="fa-solid fa-chart-line"></i><span>Dashboard</span></a>
+                <a href="{% url 'order_list' %}" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-600 hover:bg-gray-100 transition-all"><i class="fa-solid fa-box"></i><span>My Orders</span></a>
+                <a href="{% url 'wishlist' %}" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-600 hover:bg-gray-100 transition-all"><i class="fa-regular fa-heart"></i><span>Wishlist</span></a>
+                <a href="{% url 'addresses' %}" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-600 hover:bg-gray-100 transition-all"><i class="fa-solid fa-location-dot"></i><span>Addresses</span></a>
+                <a href="{% url 'profile' %}" class="flex items-center space-x-3 px-4 py-3 rounded-xl bg-black text-white shadow-sm"><i class="fa-regular fa-user"></i><span>Edit Profile</span></a>
+            </nav>
+        </aside>
+
+        <div class="lg:col-span-3">
+            <div class="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm max-w-xl space-y-6">
+                <h1 class="text-2xl font-extrabold tracking-tight">Edit Account Details</h1>
+                <form method="POST" action="{% url 'profile' %}" class="space-y-4">
+                    {% csrf_token %}
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold uppercase text-gray-500 mb-1">First Name</label>
+                            <input type="text" name="first_name" value="{{ user.first_name }}" class="w-full border rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-black">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase text-gray-500 mb-1">Last Name</label>
+                            <input type="text" name="last_name" value="{{ user.last_name }}" class="w-full border rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-black">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-gray-500 mb-1">Email Address</label>
+                        <input type="email" value="{{ user.email }}" readonly class="w-full bg-gray-100 border rounded-xl px-4 py-3 text-sm text-gray-500 cursor-not-allowed">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-gray-500 mb-1">Phone Number</label>
+                        <input type="text" name="phone" value="{{ user.phone }}" class="w-full border rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-black">
+                    </div>
+
+                    <button type="submit" class="bg-black text-white px-8 py-3.5 rounded-xl font-bold text-xs shadow-md hover:bg-gray-800 transition-all">Save Changes</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

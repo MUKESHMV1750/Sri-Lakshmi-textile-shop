@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Returns | LoomLuxe{% endblock %}
+
+{% block content %}
+<section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <h1 class="text-3xl font-extrabold tracking-tight mb-8">My Return Requests</h1>
+
+    <div class="space-y-4">
+        {% for ret in returns %}
+        <div class="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm flex items-center justify-between">
+            <div>
+                <span class="font-extrabold text-sm text-black block">Return #{{ ret.id }} (Order #{{ ret.order.order_number }})</span>
+                <span class="text-xs text-gray-400 block mt-1">Reason: {{ ret.get_reason_display }}</span>
+            </div>
+            <a href="{% url 'return_status' ret.id %}" class="bg-black text-white px-5 py-2 rounded-xl text-xs font-semibold">Status</a>
+        </div>
+        {% empty %}
+        <div class="bg-gray-50 rounded-3xl p-16 text-center text-gray-400 border border-gray-100">
+            <p class="text-sm font-semibold text-gray-600">You have no active return requests.</p>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Request Return | LoomLuxe{% endblock %}
+
+{% block content %}
+<section class="max-w-2xl mx-auto px-4 py-12">
+    <div class="bg-white p-8 rounded-3xl border border-gray-100 shadow-xl space-y-6">
+        <h1 class="text-2xl font-extrabold tracking-tight">Request Return / Exchange</h1>
+        <p class="text-xs text-gray-400">Order #{{ order.order_number }}</p>
+
+        <form method="POST" action="{% url 'request_return' order.order_number %}" class="space-y-4">
+            {% csrf_token %}
+            <div>
+                <label class="block text-xs font-bold uppercase text-gray-500 mb-1">Reason for Return</label>
+                <select name="reason" required class="w-full border rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-black">
+                    <option value="defective">Defective / Damaged Fabric</option>
+                    <option value="size">Size Fit Issue</option>
+                    <option value="wrong_item">Received Wrong Item</option>
+                    <option value="other">Other Reason</option>
+                </select>
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold uppercase text-gray-500 mb-1">Comments / Details</label>
+                <textarea name="comment" rows="4" placeholder="Explain the issue..." class="w-full border rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-black"></textarea>
+            </div>
+
+            <button type="submit" class="w-full bg-black text-white py-3.5 rounded-xl font-bold text-xs shadow-md">Submit Return Request</button>
+        </form>
+    </div>
+</section>
+{% endblock %}

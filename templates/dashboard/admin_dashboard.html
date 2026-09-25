@@ -1,0 +1,238 @@
+{% extends 'dashboard/admin_base.html' %}
+
+{% block title %}Dashboard Overview{% endblock %}
+{% block header_title %}Analytics Overview{% endblock %}
+
+{% block content %}
+<!-- KPI Cards -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+    <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-200 flex items-center justify-between">
+        <div>
+            <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Total Revenue</span>
+            <h2 class="text-2xl font-black mt-1 text-black">₹{{ total_revenue|floatformat:0 }}</h2>
+        </div>
+        <div class="w-12 h-12 bg-emerald-50 rounded-2xl flex items-center justify-center text-emerald-600 font-bold text-xl">
+            <i class="fa-solid fa-indian-rupee-sign"></i>
+        </div>
+    </div>
+    <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-200 flex items-center justify-between">
+        <div>
+            <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Total Orders</span>
+            <h2 class="text-2xl font-black mt-1 text-black">{{ total_orders }}</h2>
+        </div>
+        <div class="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-600 font-bold text-xl">
+            <i class="fa-solid fa-cart-shopping"></i>
+        </div>
+    </div>
+    <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-200 flex items-center justify-between">
+        <div>
+            <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Active Customers</span>
+            <h2 class="text-2xl font-black mt-1 text-black">{{ total_customers }}</h2>
+        </div>
+        <div class="w-12 h-12 bg-purple-50 rounded-2xl flex items-center justify-center text-purple-600 font-bold text-xl">
+            <i class="fa-solid fa-users"></i>
+        </div>
+    </div>
+    <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-200 flex items-center justify-between">
+        <div>
+            <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Total Products</span>
+            <h2 class="text-2xl font-black mt-1 text-black">{{ total_products }}</h2>
+        </div>
+        <div class="w-12 h-12 bg-amber-50 rounded-2xl flex items-center justify-center text-amber-600 font-bold text-xl">
+            <i class="fa-solid fa-box"></i>
+        </div>
+    </div>
+</div>
+
+<!-- Charts Section: Line Graph & Ring Graph -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- Line Graph Card: Sales & Order Trend -->
+    <div class="lg:col-span-2 bg-white p-6 sm:p-8 rounded-3xl shadow-sm border border-gray-200 flex flex-col justify-between">
+        <div class="flex items-center justify-between mb-6">
+            <div>
+                <h3 class="font-extrabold text-base sm:text-lg text-black">Sales Revenue & Order Trend (Line Graph)</h3>
+                <p class="text-xs text-gray-400">Daily sales performance over the past 14 days</p>
+            </div>
+            <span class="text-xs font-bold uppercase bg-gray-100 text-gray-600 px-3 py-1 rounded-full">14 Days Trend</span>
+        </div>
+        <div class="relative h-72 sm:h-80 w-full">
+            <canvas id="revenueLineChart" class="w-full h-full block"></canvas>
+        </div>
+    </div>
+
+    <!-- Ring Graph Card: Order Status Distribution -->
+    <div class="bg-white p-6 sm:p-8 rounded-3xl shadow-sm border border-gray-200 flex flex-col justify-between">
+        <div class="mb-4">
+            <h3 class="font-extrabold text-base sm:text-lg text-black">Order Status Ring Graph</h3>
+            <p class="text-xs text-gray-400">Distribution of fulfillment statuses</p>
+        </div>
+        <div class="relative h-64 sm:h-72 w-full flex items-center justify-center">
+            <canvas id="statusRingChart" class="w-full h-full block"></canvas>
+        </div>
+        <div class="mt-4 text-center">
+            <span class="text-xs text-gray-400 font-medium">Total Orders tracked: <strong class="text-black">{{ total_orders }}</strong></span>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Orders Table -->
+<div class="bg-white p-6 sm:p-8 rounded-3xl shadow-sm border border-gray-200 space-y-6">
+    <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-2">
+        <h3 class="font-extrabold text-lg text-black">Recent Customer Orders</h3>
+        <a href="{% url 'admin_orders' %}" class="text-xs font-bold text-black hover:underline">View All Orders →</a>
+    </div>
+    <div class="overflow-x-auto rounded-2xl border border-gray-100">
+        <table class="w-full text-left text-xs">
+            <thead class="bg-gray-50 uppercase text-gray-400 font-bold border-b border-gray-100">
+                <tr>
+                    <th class="p-4">Order ID</th>
+                    <th class="p-4">Customer</th>
+                    <th class="p-4">Date</th>
+                    <th class="p-4">Total</th>
+                    <th class="p-4">Status</th>
+                    <th class="p-4">Update</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+                {% for order in recent_orders %}
+                <tr class="hover:bg-gray-50 transition-colors">
+                    <td class="p-4 font-bold text-black">#{{ order.order_number }}</td>
+                    <td class="p-4 font-medium">{{ order.user.get_full_name|default:order.user.email }}</td>
+                    <td class="p-4 text-gray-500">{{ order.created_at|date:"M d, Y" }}</td>
+                    <td class="p-4 font-bold text-black">₹{{ order.total }}</td>
+                    <td class="p-4">
+                        <span class="px-3 py-1 rounded-full font-bold uppercase text-[10px] {% if order.status == 'delivered' %}bg-emerald-100 text-emerald-800{% elif order.status == 'cancelled' %}bg-red-100 text-red-800{% else %}bg-amber-100 text-amber-800{% endif %}">
+                            {{ order.get_status_display }}
+                        </span>
+                    </td>
+                    <td class="p-4">
+                        <form method="POST" action="{% url 'admin_update_order_status' order.id %}">
+                            {% csrf_token %}
+                            <select name="status" onchange="this.form.submit()" class="bg-gray-50 border border-gray-200 rounded-lg px-2 py-1 text-xs font-semibold focus:outline-none">
+                                <option value="pending" {% if order.status == 'pending' %}selected{% endif %}>Pending</option>
+                                <option value="confirmed" {% if order.status == 'confirmed' %}selected{% endif %}>Confirmed</option>
+                                <option value="shipped" {% if order.status == 'shipped' %}selected{% endif %}>Shipped</option>
+                                <option value="delivered" {% if order.status == 'delivered' %}selected{% endif %}>Delivered</option>
+                            </select>
+                        </form>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="6" class="p-8 text-center text-gray-400">No recent orders found.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{{ chart_labels|json_script:"chart-labels-data" }}
+{{ chart_revenue|json_script:"chart-revenue-data" }}
+{{ chart_orders|json_script:"chart-orders-data" }}
+{{ status_ring_labels|json_script:"status-ring-labels-data" }}
+{{ status_ring_data|json_script:"status-ring-data-data" }}
+
+<!-- Chart.js Script Initializer -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const labels = JSON.parse(document.getElementById('chart-labels-data').textContent);
+        const revenueData = JSON.parse(document.getElementById('chart-revenue-data').textContent);
+        const ordersData = JSON.parse(document.getElementById('chart-orders-data').textContent);
+
+        // 1. Line Chart: Sales & Orders
+        const lineCanvas = document.getElementById('revenueLineChart');
+        if (lineCanvas) {
+            const lineCtx = lineCanvas.getContext('2d');
+            const revenueGradient = lineCtx.createLinearGradient(0, 0, 0, 300);
+            revenueGradient.addColorStop(0, 'rgba(16, 185, 129, 0.35)');
+            revenueGradient.addColorStop(1, 'rgba(16, 185, 129, 0.0)');
+
+            new Chart(lineCtx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Revenue (₹)',
+                            data: revenueData,
+                            borderColor: '#10B981',
+                            backgroundColor: revenueGradient,
+                            borderWidth: 3,
+                            tension: 0.4,
+                            fill: true,
+                            yAxisID: 'y'
+                        },
+                        {
+                            label: 'Orders Count',
+                            data: ordersData,
+                            borderColor: '#6366F1',
+                            backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                            borderWidth: 2,
+                            borderDash: [5, 5],
+                            tension: 0.4,
+                            fill: false,
+                            yAxisID: 'y1'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: { font: { family: 'Plus Jakarta Sans', size: 12, weight: '600' } }
+                        }
+                    },
+                    scales: {
+                        x: { grid: { display: false }, ticks: { font: { family: 'Plus Jakarta Sans', size: 11 } } },
+                        y: { type: 'linear', display: true, position: 'left', grid: { color: '#F3F4F6' }, ticks: { font: { family: 'Plus Jakarta Sans', size: 11 } } },
+                        y1: { type: 'linear', display: true, position: 'right', grid: { drawOnChartArea: false }, ticks: { font: { family: 'Plus Jakarta Sans', size: 11 }, stepSize: 1 } }
+                    }
+                }
+            });
+        }
+
+        // 2. Order Status Ring Graph (Doughnut Chart)
+        const statusCanvas = document.getElementById('statusRingChart');
+        if (statusCanvas) {
+            const statusCtx = statusCanvas.getContext('2d');
+            const statusLabels = JSON.parse(document.getElementById('status-ring-labels-data').textContent);
+            const statusData = JSON.parse(document.getElementById('status-ring-data-data').textContent);
+
+            new Chart(statusCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: statusLabels,
+                    datasets: [{
+                        data: statusData,
+                        backgroundColor: [
+                            '#F59E0B', // Pending - Amber
+                            '#3B82F6', // Confirmed - Blue
+                            '#6366F1', // Packed - Indigo
+                            '#8B5CF6', // Shipped - Purple
+                            '#10B981', // Delivered - Emerald
+                            '#EF4444'  // Cancelled - Red
+                        ],
+                        borderWidth: 3,
+                        borderColor: '#FFFFFF',
+                        hoverOffset: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '68%',
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: { font: { family: 'Plus Jakarta Sans', size: 11, weight: '600' }, boxWidth: 12, padding: 12 }
+                        }
+                    }
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}
+

@@ -1,0 +1,54 @@
+{% extends 'dashboard/admin_base.html' %}
+
+{% block title %}Orders Management{% endblock %}
+{% block header_title %}Orders & Fulfillment Management{% endblock %}
+
+{% block content %}
+<div class="bg-white rounded-3xl shadow-sm border border-gray-200 overflow-hidden">
+    <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs">
+            <thead class="bg-gray-50 uppercase text-gray-400 font-bold border-b border-gray-100">
+                <tr>
+                    <th class="p-4">Order Number</th>
+                    <th class="p-4">Customer</th>
+                    <th class="p-4">Date</th>
+                    <th class="p-4">Total</th>
+                    <th class="p-4">Payment Method</th>
+                    <th class="p-4">Status</th>
+                    <th class="p-4">Update Status</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+                {% for order in orders %}
+                <tr class="hover:bg-gray-50 transition-colors">
+                    <td class="p-4 font-bold text-black">#{{ order.order_number }}</td>
+                    <td class="p-4 font-medium">{{ order.user.get_full_name|default:order.user.email }}</td>
+                    <td class="p-4 text-gray-500">{{ order.created_at|date:"M d, Y" }}</td>
+                    <td class="p-4 font-bold text-black">₹{{ order.total }}</td>
+                    <td class="p-4 uppercase font-semibold text-gray-500">{{ order.payment_method }}</td>
+                    <td class="p-4">
+                        <span class="px-3 py-1 rounded-full font-bold uppercase text-[10px] {% if order.status == 'delivered' %}bg-emerald-100 text-emerald-800{% elif order.status == 'cancelled' %}bg-red-100 text-red-800{% else %}bg-amber-100 text-amber-800{% endif %}">
+                            {{ order.get_status_display }}
+                        </span>
+                    </td>
+                    <td class="p-4">
+                        <form method="POST" action="{% url 'admin_update_order_status' order.id %}">
+                            {% csrf_token %}
+                            <select name="status" onchange="this.form.submit()" class="bg-gray-50 border border-gray-200 rounded-lg px-2 py-1 text-xs font-semibold">
+                                <option value="pending" {% if order.status == 'pending' %}selected{% endif %}>Pending</option>
+                                <option value="confirmed" {% if order.status == 'confirmed' %}selected{% endif %}>Confirmed</option>
+                                <option value="shipped" {% if order.status == 'shipped' %}selected{% endif %}>Shipped</option>
+                                <option value="delivered" {% if order.status == 'delivered' %}selected{% endif %}>Delivered</option>
+                                <option value="cancelled" {% if order.status == 'cancelled' %}selected{% endif %}>Cancelled</option>
+                            </select>
+                        </form>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="7" class="p-8 text-center text-gray-400">No orders found.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,301 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}LoomLuxe Textile Store | Modern Heritage & Apparel{% endblock %}
+
+{% block content %}
+<!-- Hero Banner Carousel Section -->
+<section class="relative bg-gray-900 text-white overflow-hidden mx-4 sm:mx-8 my-4 rounded-3xl min-h-[550px] shadow-xl group">
+    <!-- Carousel Slides Wrapper -->
+    <div id="hero-carousel-slides" class="relative w-full min-h-[550px] flex items-center justify-center">
+        {% for banner in hero_banners %}
+        <div class="hero-slide absolute inset-0 transition-opacity duration-1000 ease-in-out {% if forloop.first %}opacity-100 z-10{% else %}opacity-0 z-0{% endif %} flex items-center justify-center">
+            <div class="absolute inset-0 z-0">
+                <img src="{{ banner.image_url }}" alt="{{ banner.title }}" class="w-full h-full object-cover opacity-60 scale-105 transition-transform duration-1000">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
+            </div>
+            <div class="relative z-10 text-center max-w-3xl mx-auto px-4 py-20">
+                <span class="inline-block py-1 px-3.5 rounded-full bg-white/20 backdrop-blur-md text-xs font-semibold tracking-wider uppercase mb-4 text-gray-200">{{ banner.badge|default:"New Collection 2026" }}</span>
+                <h1 class="text-4xl sm:text-6xl font-extrabold tracking-tight mb-6">{{ banner.title }}</h1>
+                <p class="text-base sm:text-lg text-gray-300 mb-8 max-w-xl mx-auto font-light leading-relaxed">
+                    {{ banner.subtitle }}
+                </p>
+                <div class="flex flex-wrap justify-center gap-4">
+                    <a href="{{ banner.link_url|default:'/shop/' }}" class="bg-white text-black font-semibold px-8 py-4 rounded-full shadow-lg hover:bg-gray-100 transition-all transform hover:-translate-y-0.5">{{ banner.button_text|default:"Shop Now" }}</a>
+                    <a href="#collections" class="bg-white/10 hover:bg-white/20 backdrop-blur-md text-white border border-white/30 font-semibold px-8 py-4 rounded-full transition-all">Explore Collections</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Navigation Arrows -->
+    <button onclick="prevHeroSlide()" class="absolute left-4 sm:left-6 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-white/20 hover:bg-white/40 backdrop-blur-md text-white flex items-center justify-center transition-all opacity-80 hover:opacity-100 focus:outline-none" aria-label="Previous Slide">
+        <i class="fa-solid fa-chevron-left text-sm"></i>
+    </button>
+    <button onclick="nextHeroSlide()" class="absolute right-4 sm:right-6 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-white/20 hover:bg-white/40 backdrop-blur-md text-white flex items-center justify-center transition-all opacity-80 hover:opacity-100 focus:outline-none" aria-label="Next Slide">
+        <i class="fa-solid fa-chevron-right text-sm"></i>
+    </button>
+
+    <!-- Slide Indicator Dots -->
+    <div class="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex space-x-2">
+        {% for banner in hero_banners %}
+        <button onclick="goToHeroSlide({{ forloop.counter0 }})" class="hero-dot {% if forloop.first %}w-8 bg-white{% else %}w-2 bg-white/50{% endif %} h-2 rounded-full hover:bg-white transition-all focus:outline-none" aria-label="Slide {{ forloop.counter }}"></button>
+        {% endfor %}
+    </div>
+</section>
+
+<!-- Main Shop / New Arrivals Section -->
+<section id="shop" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <div class="text-center max-w-2xl mx-auto mb-12">
+        <h2 class="text-3xl font-bold tracking-tight mb-3">New Arrivals</h2>
+        <p class="text-gray-500 text-sm sm:text-base">Our new arrivals are built to withstand your activities while keeping you looking your absolute best!</p>
+    </div>
+
+    <!-- Category Filter Tabs -->
+    <div class="flex items-center justify-start sm:justify-center overflow-x-auto hide-scrollbar space-x-2 mb-10 pb-2">
+        <button onclick="filterCategory('all', this)" class="filter-tab px-6 py-2.5 rounded-full text-sm font-medium bg-black text-white transition-all whitespace-nowrap shadow-sm">All Items</button>
+        <button onclick="filterCategory('silk-sarees', this)" class="filter-tab px-6 py-2.5 rounded-full text-sm font-medium bg-gray-100 text-gray-600 hover:bg-gray-200 transition-all whitespace-nowrap">Silk Sarees</button>
+        <button onclick="filterCategory('cotton-fabrics', this)" class="filter-tab px-6 py-2.5 rounded-full text-sm font-medium bg-gray-100 text-gray-600 hover:bg-gray-200 transition-all whitespace-nowrap">Cotton Fabrics</button>
+        <button onclick="filterCategory('artisan-dupattas', this)" class="filter-tab px-6 py-2.5 rounded-full text-sm font-medium bg-gray-100 text-gray-600 hover:bg-gray-200 transition-all whitespace-nowrap">Artisan Dupattas</button>
+        <button onclick="filterCategory('designer-kurtis', this)" class="filter-tab px-6 py-2.5 rounded-full text-sm font-medium bg-gray-100 text-gray-600 hover:bg-gray-200 transition-all whitespace-nowrap">Designer Kurtis</button>
+    </div>
+
+    <!-- Product Grid -->
+    <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+        {% for product in featured_products %}
+        <div class="product-item-card group bg-white rounded-3xl p-4 border border-gray-100 shadow-sm hover:shadow-md transition-all flex flex-col justify-between" data-category="{{ product.category.slug }}">
+            <div>
+                <div class="relative bg-gray-100 rounded-2xl overflow-hidden mb-4 h-72 cursor-pointer" onclick="openProductModal('{{ product.id }}', '{{ product.name|escapejs }}', '₹{{ product.effective_price }}', '{{ product.primary_image.image_url|default:"" }}', '{{ product.short_description|default:product.description|escapejs }}', '{{ product.category.name|escapejs }}')">
+                    {% if product.primary_image %}
+                    <img src="{{ product.primary_image.image_url }}" alt="{{ product.name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                    {% else %}
+                    <div class="w-full h-full flex items-center justify-center bg-gray-100 text-gray-400 text-3xl"><i class="fa-solid fa-image"></i></div>
+                    {% endif %}
+
+                    {% if product.discount_percentage %}
+                    <span class="absolute top-3 left-3 bg-red-600 text-white text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">-{{ product.discount_percentage }}%</span>
+                    {% elif product.is_new_arrival %}
+                    <span class="absolute top-3 left-3 bg-black text-white text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">New</span>
+                    {% endif %}
+
+                    <button onclick="event.stopPropagation(); toggleWishlist('{{ product.id }}')" class="absolute top-3 right-3 w-9 h-9 bg-white/80 hover:bg-white rounded-full flex items-center justify-center shadow transition-all">
+                        <i class="fa-regular fa-heart text-gray-700"></i>
+                    </button>
+                </div>
+                <h3 class="font-bold text-base mb-1 cursor-pointer hover:underline" onclick="openProductModal('{{ product.id }}', '{{ product.name|escapejs }}', '₹{{ product.effective_price }}', '{{ product.primary_image.image_url|default:"" }}', '{{ product.short_description|default:product.description|escapejs }}', '{{ product.category.name|escapejs }}')">{{ product.name }}</h3>
+                <p class="text-xs text-gray-400 uppercase tracking-wider mb-2">{{ product.category.name }}</p>
+            </div>
+            <div class="flex items-center justify-between pt-2">
+                <div class="flex items-baseline space-x-2">
+                    <span class="font-black text-lg">₹{{ product.effective_price }}</span>
+                    {% if product.sale_price %}
+                    <span class="text-xs text-gray-400 line-through">₹{{ product.price }}</span>
+                    {% endif %}
+                </div>
+                <button onclick="addToCart('{{ product.id }}')" class="add-to-cart-btn bg-black hover:bg-gray-800 text-white w-10 h-10 rounded-full flex items-center justify-center shadow transition-all" data-product-id="{{ product.id }}">
+                    <i class="fa-solid fa-bag-shopping text-xs"></i>
+                </button>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-span-full text-center py-12 text-gray-400">No featured products available at the moment.</div>
+        {% endfor %}
+    </div>
+</section>
+
+<!-- Featured Collections Showcase -->
+<section id="collections" class="bg-gray-50 py-20 border-t border-b border-gray-100 my-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col md:flex-row md:items-end justify-between mb-12">
+            <div>
+                <span class="text-xs font-bold tracking-widest text-gray-500 uppercase">Curated Lineup</span>
+                <h2 class="text-3xl font-bold tracking-tight mt-1">Featured Collections</h2>
+            </div>
+            <p class="text-gray-500 text-sm mt-2 md:mt-0 max-w-md">Explore to mix and match! Check out our handcrafted collections to level up your style game.</p>
+        </div>
+
+        <!-- Collections Grid Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- Collection 1: Pure Silk Sarees -->
+            <a href="{% url 'shop' %}?category=silk-sarees" class="group relative rounded-3xl overflow-hidden h-[450px] shadow-md cursor-pointer">
+                <img src="https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&q=80&w=800" alt="Silk Sarees Collection" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-8 text-white">
+                    <span class="text-xs uppercase tracking-wider text-gray-300 font-semibold mb-1">Pure Heritage Weaves</span>
+                    <h3 class="text-2xl font-bold mb-3">Kanjeevaram & Banarasi</h3>
+                    <span class="inline-flex items-center space-x-2 text-sm font-medium group-hover:underline"><span>Explore Collection</span> <i class="fa-solid fa-arrow-right text-xs"></i></span>
+                </div>
+            </a>
+
+            <!-- Collection 2: Artisan Dupattas -->
+            <a href="{% url 'shop' %}?category=artisan-dupattas" class="group relative rounded-3xl overflow-hidden h-[450px] shadow-md cursor-pointer">
+                <img src="https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&q=80&w=800" alt="Accessories & Dupattas" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-8 text-white">
+                    <span class="text-xs uppercase tracking-wider text-gray-300 font-semibold mb-1">Essential Accents</span>
+                    <h3 class="text-2xl font-bold mb-3">Artisan Dupattas</h3>
+                    <span class="inline-flex items-center space-x-2 text-sm font-medium group-hover:underline"><span>Explore Collection</span> <i class="fa-solid fa-arrow-right text-xs"></i></span>
+                </div>
+            </a>
+
+            <!-- Collection 3: Cotton & Linen Textiles -->
+            <a href="{% url 'shop' %}?category=cotton-fabrics" class="group relative rounded-3xl overflow-hidden h-[450px] shadow-md cursor-pointer">
+                <img src="https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&q=80&w=800" alt="Organic Cotton & Linen" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-8 text-white">
+                    <span class="text-xs uppercase tracking-wider text-gray-300 font-semibold mb-1">Breathable Luxury</span>
+                    <h3 class="text-2xl font-bold mb-3">Handblock Cotton & Linen</h3>
+                    <span class="inline-flex items-center space-x-2 text-sm font-medium group-hover:underline"><span>Explore Collection</span> <i class="fa-solid fa-arrow-right text-xs"></i></span>
+                </div>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Store Promo Banner (Flagship Store Showcase) -->
+<section id="store-locator" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <div class="bg-gray-100 rounded-3xl overflow-hidden grid grid-cols-1 lg:grid-cols-2 items-center shadow-sm">
+        <div class="p-8 sm:p-12 lg:p-16">
+            <span class="text-xs font-bold uppercase tracking-widest text-gray-500 mb-2 block">Global Flagship Outlets</span>
+            <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight mb-4">Find Your Perfect Look at LoomLuxe Flagship Stores</h2>
+            <p class="text-gray-600 text-sm sm:text-base leading-relaxed mb-8">
+                Welcome to our flagship outlets in Shibuya, Tokyo & Khan Market, New Delhi. Step into our stylish ambient boutique and experience our latest in high fashion and artisan apparel.
+            </p>
+            <div class="mb-8">
+                <span class="text-xs font-semibold text-gray-500 uppercase block mb-1">Festive Season Offer!</span>
+                <div class="text-5xl font-black tracking-tighter text-black">50% <span class="text-lg font-normal text-gray-600">Off Selected Items</span></div>
+            </div>
+            <a href="{% url 'contact' %}" class="inline-block bg-black text-white px-8 py-4 rounded-full font-medium shadow-md hover:bg-gray-800 transition-all">Locate Stores</a>
+        </div>
+        <div class="h-80 lg:h-full min-h-[350px]">
+            <img src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&q=80&w=1000" alt="LoomLuxe Store" class="w-full h-full object-cover">
+        </div>
+    </div>
+</section>
+
+<!-- Quick View / Product Detail Modal -->
+<div id="product-modal" class="fixed inset-0 z-50 overflow-y-auto hidden flex items-center justify-center p-4">
+    <div class="fixed inset-0 bg-black/60 backdrop-blur-sm" onclick="closeProductModal()"></div>
+    <div class="relative bg-white rounded-3xl max-w-3xl w-full overflow-hidden shadow-2xl z-10 grid grid-cols-1 md:grid-cols-2">
+        <button onclick="closeProductModal()" class="absolute top-4 right-4 z-20 bg-white/80 hover:bg-white p-2 rounded-full shadow"><i class="fa-solid fa-xmark text-lg"></i></button>
+        <div class="bg-gray-100 h-72 md:h-full relative">
+            <img id="modal-img" src="" alt="Product" class="w-full h-full object-cover">
+        </div>
+        <div class="p-8 flex flex-col justify-between">
+            <div>
+                <span id="modal-category" class="text-xs uppercase tracking-widest text-gray-400 font-semibold">Category</span>
+                <h3 id="modal-title" class="text-2xl font-bold mt-1 mb-3">Product Title</h3>
+                <div id="modal-price" class="text-xl font-bold mb-4">₹0.00</div>
+                <p id="modal-desc" class="text-gray-600 text-sm leading-relaxed mb-6">Product detailed description goes here...</p>
+            </div>
+            <button id="modal-add-btn" class="w-full bg-black text-white py-4 rounded-xl font-medium hover:bg-gray-800 transition-all shadow-md">Add to Bag</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    let currentHeroSlide = 0;
+    let heroTimer = null;
+
+    function initHeroCarousel() {
+        showHeroSlide(currentHeroSlide);
+        startHeroTimer();
+    }
+
+    function showHeroSlide(index) {
+        const slides = document.querySelectorAll('.hero-slide');
+        const dots = document.querySelectorAll('.hero-dot');
+        if (!slides.length) return;
+
+        if (index >= slides.length) currentHeroSlide = 0;
+        else if (index < 0) currentHeroSlide = slides.length - 1;
+        else currentHeroSlide = index;
+
+        slides.forEach((slide, i) => {
+            if (i === currentHeroSlide) {
+                slide.classList.remove('opacity-0', 'z-0');
+                slide.classList.add('opacity-100', 'z-10');
+            } else {
+                slide.classList.remove('opacity-100', 'z-10');
+                slide.classList.add('opacity-0', 'z-0');
+            }
+        });
+
+        dots.forEach((dot, i) => {
+            if (i === currentHeroSlide) {
+                dot.classList.remove('w-2', 'bg-white/50');
+                dot.classList.add('w-8', 'bg-white');
+            } else {
+                dot.classList.remove('w-8', 'bg-white');
+                dot.classList.add('w-2', 'bg-white/50');
+            }
+        });
+    }
+
+    function nextHeroSlide() {
+        resetHeroTimer();
+        showHeroSlide(currentHeroSlide + 1);
+    }
+
+    function prevHeroSlide() {
+        resetHeroTimer();
+        showHeroSlide(currentHeroSlide - 1);
+    }
+
+    function goToHeroSlide(index) {
+        resetHeroTimer();
+        showHeroSlide(index);
+    }
+
+    function startHeroTimer() {
+        heroTimer = setInterval(() => {
+            showHeroSlide(currentHeroSlide + 1);
+        }, 5000);
+    }
+
+    function resetHeroTimer() {
+        if (heroTimer) clearInterval(heroTimer);
+        startHeroTimer();
+    }
+
+    document.addEventListener('DOMContentLoaded', initHeroCarousel);
+
+    function filterCategory(categorySlug, btn) {
+        document.querySelectorAll('.filter-tab').forEach(b => {
+            b.classList.remove('bg-black', 'text-white', 'shadow-sm');
+            b.classList.add('bg-gray-100', 'text-gray-600');
+        });
+        btn.classList.remove('bg-gray-100', 'text-gray-600');
+        btn.classList.add('bg-black', 'text-white', 'shadow-sm');
+
+        const items = document.querySelectorAll('.product-item-card');
+        items.forEach(item => {
+            if (categorySlug === 'all' || item.dataset.category === categorySlug) {
+                item.style.display = 'flex';
+            } else {
+                item.style.display = 'none';
+            }
+        });
+    }
+
+    function openProductModal(id, title, price, img, desc, category) {
+        document.getElementById('modal-img').src = img || 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=600';
+        document.getElementById('modal-title').innerText = title;
+        document.getElementById('modal-category').innerText = category;
+        document.getElementById('modal-price').innerText = price;
+        document.getElementById('modal-desc').innerText = desc;
+
+        const addBtn = document.getElementById('modal-add-btn');
+        addBtn.onclick = function() {
+            addToCart(id);
+            closeProductModal();
+        };
+
+        document.getElementById('product-modal').classList.remove('hidden');
+    }
+
+    function closeProductModal() {
+        document.getElementById('product-modal').classList.add('hidden');
+    }
+</script>
+{% endblock %}

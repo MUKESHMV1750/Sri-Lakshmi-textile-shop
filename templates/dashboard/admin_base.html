@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Admin Panel{% endblock %} | LoomLuxe</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                    }
+                }
+            }
+        };
+    </script>
+    <style>
+        #admin-sidebar::-webkit-scrollbar {
+            width: 4px;
+        }
+        #admin-sidebar::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 2px;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans text-gray-900 antialiased">
+    <!-- Mobile Sidebar Backdrop -->
+    <div id="admin-sidebar-backdrop" onclick="toggleAdminSidebar()" class="fixed inset-0 bg-black/60 z-40 hidden md:hidden transition-opacity"></div>
+
+    <div class="flex min-h-screen relative">
+        <!-- Admin Sidebar -->
+        <aside id="admin-sidebar" class="fixed md:sticky top-0 inset-y-0 left-0 z-50 w-64 h-screen max-h-screen overflow-y-auto bg-black text-white p-6 flex flex-col justify-between flex-shrink-0 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out shadow-2xl md:shadow-none">
+            <div class="space-y-8">
+                <div class="flex items-center justify-between">
+                    <a href="{% url 'admin_dashboard' %}" class="flex items-center space-x-2">
+                        <span class="text-2xl">🧶</span>
+                        <span class="text-xl font-black tracking-tight uppercase text-white">Loom<span class="text-amber-500">Luxe</span></span>
+                    </a>
+                    <!-- Mobile Close Button -->
+                    <button onclick="toggleAdminSidebar()" class="md:hidden text-gray-400 hover:text-white p-1">
+                        <i class="fa-solid fa-xmark text-xl"></i>
+                    </button>
+                </div>
+                <nav class="space-y-1 font-medium text-xs">
+                    <a href="{% url 'admin_dashboard' %}" class="flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-gray-900 transition-all {% if request.resolver_match.url_name == 'admin_dashboard' %}bg-gray-800 text-white font-bold{% else %}text-gray-400{% endif %}">
+                        <i class="fa-solid fa-chart-pie w-4"></i><span>Dashboard</span>
+                    </a>
+                    <a href="{% url 'admin_products' %}" class="flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-gray-900 transition-all {% if 'product' in request.resolver_match.url_name %}bg-gray-800 text-white font-bold{% else %}text-gray-400{% endif %}">
+                        <i class="fa-solid fa-box w-4"></i><span>Products</span>
+                    </a>
+                    <a href="{% url 'admin_categories' %}" class="flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-gray-900 transition-all {% if request.resolver_match.url_name == 'admin_categories' %}bg-gray-800 text-white font-bold{% else %}text-gray-400{% endif %}">
+                        <i class="fa-solid fa-tags w-4"></i><span>Categories</span>
+                    </a>
+                    <a href="{% url 'admin_orders' %}" class="flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-gray-900 transition-all {% if request.resolver_match.url_name == 'admin_orders' %}bg-gray-800 text-white font-bold{% else %}text-gray-400{% endif %}">
+                        <i class="fa-solid fa-cart-shopping w-4"></i><span>Orders</span>
+                    </a>
+                    <a href="{% url 'admin_users' %}" class="flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-gray-900 transition-all {% if request.resolver_match.url_name == 'admin_users' %}bg-gray-800 text-white font-bold{% else %}text-gray-400{% endif %}">
+                        <i class="fa-solid fa-user-gear w-4"></i><span>User Roles</span>
+                    </a>
+                    <a href="{% url 'admin_customers' %}" class="flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-gray-900 transition-all {% if request.resolver_match.url_name == 'admin_customers' %}bg-gray-800 text-white font-bold{% else %}text-gray-400{% endif %}">
+                        <i class="fa-solid fa-users w-4"></i><span>Customers</span>
+                    </a>
+                    <a href="{% url 'admin_returns' %}" class="flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-gray-900 transition-all {% if request.resolver_match.url_name == 'admin_returns' %}bg-gray-800 text-white font-bold{% else %}text-gray-400{% endif %}">
+                        <i class="fa-solid fa-rotate-left w-4"></i><span>Returns</span>
+                    </a>
+                    <a href="{% url 'admin_coupons' %}" class="flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-gray-900 transition-all {% if request.resolver_match.url_name == 'admin_coupons' %}bg-gray-800 text-white font-bold{% else %}text-gray-400{% endif %}">
+                        <i class="fa-solid fa-ticket w-4"></i><span>Coupons</span>
+                    </a>
+                    <a href="{% url 'admin_banners' %}" class="flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-gray-900 transition-all {% if request.resolver_match.url_name == 'admin_banners' %}bg-gray-800 text-white font-bold{% else %}text-gray-400{% endif %}">
+                        <i class="fa-solid fa-images w-4"></i><span>Banners</span>
+                    </a>
+                    <a href="{% url 'admin_reviews' %}" class="flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-gray-900 transition-all {% if request.resolver_match.url_name == 'admin_reviews' %}bg-gray-800 text-white font-bold{% else %}text-gray-400{% endif %}">
+                        <i class="fa-solid fa-star w-4"></i><span>Reviews</span>
+                    </a>
+                </nav>
+            </div>
+            <div class="pt-6 border-t border-gray-800 space-y-2 text-xs">
+                <a href="{% url 'home' %}" target="_blank" rel="noopener noreferrer" class="flex items-center space-x-3 px-4 py-2.5 rounded-xl bg-gray-900 text-gray-200 hover:text-white hover:bg-gray-800 transition-all font-semibold">
+                    <i class="fa-solid fa-store text-amber-500"></i>
+                    <span>View Storefront</span>
+                </a>
+                <a href="{% url 'logout' %}" class="flex items-center space-x-3 px-4 py-2.5 rounded-xl bg-red-950/40 text-red-400 hover:text-red-300 hover:bg-red-900/60 transition-all font-semibold">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                    <span>Log Out</span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="flex-1 p-4 sm:p-6 lg:p-8 space-y-6 sm:space-y-8 overflow-x-hidden min-w-0">
+            <!-- Top Header Bar -->
+            <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-4 sm:p-6 rounded-3xl shadow-sm border border-gray-200">
+                <div class="flex items-center space-x-3 w-full sm:w-auto justify-between sm:justify-start">
+                    <div class="flex items-center space-x-3">
+                        <button onclick="toggleAdminSidebar()" class="md:hidden p-2.5 rounded-xl bg-gray-100 text-gray-700 hover:bg-gray-200 focus:outline-none">
+                            <i class="fa-solid fa-bars text-lg"></i>
+                        </button>
+                        <h1 class="text-xl sm:text-2xl font-extrabold tracking-tight">{% block header_title %}Admin Control Panel{% endblock %}</h1>
+                    </div>
+                </div>
+                <div class="flex flex-wrap items-center gap-2 sm:gap-3 w-full sm:w-auto justify-end border-t sm:border-t-0 pt-3 sm:pt-0 border-gray-100">
+                    <a href="{% url 'home' %}" target="_blank" rel="noopener noreferrer" class="text-xs font-bold bg-gray-100 hover:bg-gray-200 text-gray-800 px-3.5 py-2 rounded-full transition-all flex items-center space-x-1.5 shadow-sm" title="View Storefront (Opens in New Tab)">
+                        <i class="fa-solid fa-store text-emerald-600"></i>
+                        <span>View Storefront</span>
+                    </a>
+                    <span class="text-xs font-semibold bg-gray-100 px-3.5 py-2 rounded-full flex items-center shadow-sm">
+                        <i class="fa-solid fa-user-shield text-emerald-600 mr-1.5"></i>
+                        <span>{{ user.get_full_name|default:user.username }}</span>
+                    </span>
+                    <a href="{% url 'logout' %}" class="text-xs font-bold bg-red-50 text-red-600 hover:bg-red-100 px-3.5 py-2 rounded-full transition-all flex items-center space-x-1.5 shadow-sm" title="Log Out">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                        <span>Logout</span>
+                    </a>
+                </div>
+            </header>
+
+            <!-- Django Messages -->
+            {% if messages %}
+            <div class="space-y-2">
+                {% for message in messages %}
+                <div class="p-4 rounded-2xl text-xs font-bold bg-black text-white flex justify-between items-center shadow-sm">
+                    <span>{{ message }}</span>
+                    <button onclick="this.parentElement.remove()" class="text-gray-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+
+    <script>
+        function toggleAdminSidebar() {
+            const sidebar = document.getElementById('admin-sidebar');
+            const backdrop = document.getElementById('admin-sidebar-backdrop');
+            sidebar.classList.toggle('-translate-x-full');
+            backdrop.classList.toggle('hidden');
+        }
+    </script>
+</body>
+</html>

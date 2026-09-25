@@ -1,0 +1,51 @@
+{% extends 'dashboard/admin_base.html' %}
+
+{% block title %}Returns Management{% endblock %}
+{% block header_title %}Return & Refund Requests{% endblock %}
+
+{% block content %}
+<div class="bg-white rounded-3xl shadow-sm border border-gray-200 overflow-hidden">
+    <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs">
+            <thead class="bg-gray-50 uppercase text-gray-400 font-bold border-b border-gray-100">
+                <tr>
+                    <th class="p-4">Return ID</th>
+                    <th class="p-4">Order Number</th>
+                    <th class="p-4">Customer</th>
+                    <th class="p-4">Reason</th>
+                    <th class="p-4">Status</th>
+                    <th class="p-4">Update</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+                {% for ret in returns %}
+                <tr class="hover:bg-gray-50 transition-colors">
+                    <td class="p-4 font-bold text-black">#{{ ret.id }}</td>
+                    <td class="p-4 font-bold text-black">#{{ ret.order.order_number }}</td>
+                    <td class="p-4 font-medium">{{ ret.user.get_full_name|default:ret.user.email }}</td>
+                    <td class="p-4 text-gray-600">{{ ret.get_reason_display }}</td>
+                    <td class="p-4">
+                        <span class="px-3 py-1 rounded-full font-bold uppercase text-[10px] {% if ret.status == 'approved' %}bg-emerald-100 text-emerald-800{% elif ret.status == 'rejected' %}bg-red-100 text-red-800{% else %}bg-amber-100 text-amber-800{% endif %}">
+                            {{ ret.get_status_display }}
+                        </span>
+                    </td>
+                    <td class="p-4">
+                        <form method="POST" action="{% url 'admin_update_return' ret.id %}">
+                            {% csrf_token %}
+                            <select name="status" onchange="this.form.submit()" class="bg-gray-50 border border-gray-200 rounded-lg px-2 py-1 text-xs font-semibold">
+                                <option value="requested" {% if ret.status == 'requested' %}selected{% endif %}>Requested</option>
+                                <option value="approved" {% if ret.status == 'approved' %}selected{% endif %}>Approved</option>
+                                <option value="rejected" {% if ret.status == 'rejected' %}selected{% endif %}>Rejected</option>
+                                <option value="completed" {% if ret.status == 'completed' %}selected{% endif %}>Completed</option>
+                            </select>
+                        </form>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="6" class="p-8 text-center text-gray-400">No return requests found.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Contact & Store Locator | LoomLuxe{% endblock %}
+
+{% block content %}
+<section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <div class="text-center max-w-2xl mx-auto mb-12">
+        <h1 class="text-4xl font-extrabold tracking-tight mb-3">Get in Touch</h1>
+        <p class="text-gray-500 text-sm sm:text-base">Have questions regarding order shipping, customization, or corporate gifting? We're here to help.</p>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+        <!-- Contact Form -->
+        <div class="bg-white p-8 rounded-3xl border border-gray-100 shadow-lg">
+            <h3 class="font-extrabold text-xl mb-6">Send Us a Message</h3>
+            <form method="POST" action="{% url 'contact' %}" class="space-y-4">
+                {% csrf_token %}
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-gray-500 mb-1">Your Name</label>
+                        <input type="text" name="name" required placeholder="Alex Morgan" class="w-full border rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-black">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-gray-500 mb-1">Email</label>
+                        <input type="email" name="email" required placeholder="name@example.com" class="w-full border rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-black">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase text-gray-500 mb-1">Subject</label>
+                    <input type="text" name="subject" required placeholder="Order inquiry / Custom order" class="w-full border rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-black">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase text-gray-500 mb-1">Message</label>
+                    <textarea name="message" rows="4" required placeholder="Write your query here..." class="w-full border rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-black"></textarea>
+                </div>
+                <button type="submit" class="w-full bg-black text-white py-4 rounded-2xl font-bold hover:bg-gray-800 transition-all shadow-md">Send Message</button>
+            </form>
+        </div>
+
+        <!-- Store Information -->
+        <div class="space-y-6">
+            <div class="bg-gray-50 p-8 rounded-3xl border border-gray-100 space-y-4">
+                <span class="text-xs font-bold uppercase tracking-wider text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full">Global Outlets</span>
+                <h3 class="font-bold text-xl text-black">Flagship Stores</h3>
+                <div class="space-y-3 text-xs text-gray-600">
+                    <p><strong>Tokyo Flagship:</strong> 123 Shibuya Boulevard, Shibuya-ku, Tokyo 150-0002</p>
+                    <p><strong>Delhi Flagship:</strong> 42 Khan Market, New Delhi 110003</p>
+                    <p><strong>Customer Support:</strong> +91 98765 43210 / support@loomluxe.com</p>
+                    <p><strong>Hours:</strong> Mon - Sun: 10:00 AM - 9:00 PM</p>
+                </div>
+            </div>
+            <div class="h-64 rounded-3xl overflow-hidden border border-gray-100 shadow-sm">
+                <img src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&q=80&w=1000" alt="Flagship Store" class="w-full h-full object-cover">
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

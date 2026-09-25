@@ -1,0 +1,88 @@
+/* LoomLuxe Checkout Stylesheet */
+.checkout-section {
+    padding: 3rem 0 5rem;
+}
+
+.checkout-grid {
+    display: grid;
+    grid-template-columns: 1fr 400px;
+    gap: 2.5rem;
+}
+
+.checkout-step {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 2rem;
+    border: 1px solid var(--border);
+    margin-bottom: 2rem;
+}
+
+.step-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.step-number {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--primary);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+}
+
+.address-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.25rem;
+}
+
+.address-card-option {
+    border: 2px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 1.25rem;
+    cursor: pointer;
+    transition: var(--transition);
+    position: relative;
+}
+
+.address-card-option:hover, .address-card-option.selected {
+    border-color: var(--primary);
+    background: rgba(31, 77, 58, 0.02);
+}
+
+.payment-method-options {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.payment-option-label {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.25rem;
+    border: 2px solid var(--border);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.payment-option-label:hover, .payment-option-label.active {
+    border-color: var(--primary);
+    background: rgba(31, 77, 58, 0.02);
+}
+
+@media (max-width: 992px) {
+    .checkout-grid {
+        grid-template-columns: 1fr;
+    }
+    .address-cards-grid {
+        grid-template-columns: 1fr;
+    }
+}
