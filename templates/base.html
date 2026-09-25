@@ -69,35 +69,35 @@
 
 
     <!-- Header / Navbar -->
-    <header class="sticky top-0 z-40 bg-[#121212] text-white border-b border-gray-800 shadow-xl transition-all duration-300">
+    <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md text-gray-900 border-b border-gray-100 shadow-sm transition-all duration-300">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
             <!-- Brand Logo -->
             <a href="{% url 'home' %}" class="flex items-center space-x-3 group flex-shrink-0">
-                <span class="w-10 h-10 rounded-2xl bg-[#b37a44] border-2 border-amber-400/70 flex items-center justify-center text-amber-100 text-lg shadow-inner group-hover:scale-105 transition-transform">
+                <span class="w-10 h-10 rounded-2xl bg-[#b37a44] border-2 border-amber-400 flex items-center justify-center text-amber-100 text-lg shadow-inner group-hover:scale-105 transition-transform">
                     💧
                 </span>
                 <div class="flex flex-col">
-                    <span class="text-xl font-black tracking-tight text-white uppercase leading-none">
-                        Loom<span class="text-amber-400">Luxe</span>
+                    <span class="text-xl font-black tracking-tight text-gray-900 uppercase leading-none">
+                        Loom<span class="text-amber-600">Luxe</span>
                     </span>
-                    <span class="text-[9px] font-extrabold uppercase tracking-widest text-amber-400/90 mt-0.5">
+                    <span class="text-[9px] font-extrabold uppercase tracking-widest text-amber-600 mt-0.5">
                         Pure Cold-Pressed Textiles
                     </span>
                 </div>
             </a>
 
             <!-- Center Navigation Pill Capsule (Only Home, About Us, Products, Contact) -->
-            <nav class="hidden md:flex items-center space-x-1 bg-white/10 border border-white/15 p-1.5 rounded-full text-xs font-bold shadow-inner backdrop-blur-md">
-                <a href="{% url 'home' %}" class="px-5 py-2 rounded-full transition-all duration-200 {% if request.resolver_match.url_name == 'home' %}bg-[#f5b82e] text-gray-950 font-extrabold shadow-sm{% else %}text-gray-200 hover:text-white hover:bg-white/10{% endif %}">
+            <nav class="hidden md:flex items-center space-x-1 bg-gray-100 border border-gray-200/80 p-1.5 rounded-full text-xs font-bold shadow-inner">
+                <a href="{% url 'home' %}" class="px-5 py-2 rounded-full transition-all duration-200 {% if request.resolver_match.url_name == 'home' %}bg-[#f5b82e] text-gray-950 font-extrabold shadow-sm{% else %}text-gray-700 hover:text-black hover:bg-gray-200/60{% endif %}">
                     Home
                 </a>
-                <a href="{% url 'about' %}" class="px-5 py-2 rounded-full transition-all duration-200 {% if request.resolver_match.url_name == 'about' %}bg-[#f5b82e] text-gray-950 font-extrabold shadow-sm{% else %}text-gray-200 hover:text-white hover:bg-white/10{% endif %}">
+                <a href="{% url 'about' %}" class="px-5 py-2 rounded-full transition-all duration-200 {% if request.resolver_match.url_name == 'about' %}bg-[#f5b82e] text-gray-950 font-extrabold shadow-sm{% else %}text-gray-700 hover:text-black hover:bg-gray-200/60{% endif %}">
                     About Us
                 </a>
-                <a href="{% url 'shop' %}" class="px-5 py-2 rounded-full transition-all duration-200 {% if request.resolver_match.url_name == 'shop' %}bg-[#f5b82e] text-gray-950 font-extrabold shadow-sm{% else %}text-gray-200 hover:text-white hover:bg-white/10{% endif %}">
+                <a href="{% url 'shop' %}" class="px-5 py-2 rounded-full transition-all duration-200 {% if request.resolver_match.url_name == 'shop' %}bg-[#f5b82e] text-gray-950 font-extrabold shadow-sm{% else %}text-gray-700 hover:text-black hover:bg-gray-200/60{% endif %}">
                     Products
                 </a>
-                <a href="{% url 'contact' %}" class="px-5 py-2 rounded-full transition-all duration-200 {% if request.resolver_match.url_name == 'contact' %}bg-[#f5b82e] text-gray-950 font-extrabold shadow-sm{% else %}text-gray-200 hover:text-white hover:bg-white/10{% endif %}">
+                <a href="{% url 'contact' %}" class="px-5 py-2 rounded-full transition-all duration-200 {% if request.resolver_match.url_name == 'contact' %}bg-[#f5b82e] text-gray-950 font-extrabold shadow-sm{% else %}text-gray-700 hover:text-black hover:bg-gray-200/60{% endif %}">
                     Contact
                 </a>
             </nav>
@@ -105,13 +105,13 @@
             <!-- Header Action Elements -->
             <div class="flex items-center space-x-3 sm:space-x-4">
                 <!-- Search Pill Input -->
-                <button onclick="toggleSearchModal()" class="flex items-center space-x-2 bg-black/40 border-2 border-amber-400/80 hover:border-amber-400 text-gray-200 px-4 py-2 rounded-full text-xs transition-all shadow-sm">
-                    <span class="hidden sm:inline text-gray-300">Search products...</span>
-                    <i class="fa-solid fa-magnifying-glass text-amber-400 text-xs"></i>
+                <button onclick="toggleSearchModal()" class="flex items-center space-x-2 bg-gray-50 border-2 border-amber-500/80 hover:border-amber-500 text-gray-800 px-4 py-2 rounded-full text-xs transition-all shadow-sm">
+                    <span class="hidden sm:inline text-gray-600">Search products...</span>
+                    <i class="fa-solid fa-magnifying-glass text-amber-600 text-xs"></i>
                 </button>
 
                 <!-- Wishlist Icon -->
-                <a href="{% url 'wishlist' %}" class="relative p-2 text-gray-200 hover:text-amber-400 rounded-full hover:bg-white/10 transition-all" title="Wishlist">
+                <a href="{% url 'wishlist' %}" class="relative p-2 text-gray-700 hover:text-amber-600 rounded-full hover:bg-gray-100 transition-all" title="Wishlist">
                     <i class="fa-regular fa-heart text-lg"></i>
                     {% if wishlist_count %}
                     <span id="wishlist-badge" class="absolute top-1 right-1 bg-red-500 text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold shadow">{{ wishlist_count }}</span>
@@ -127,12 +127,12 @@
                 {% if user.is_authenticated %}
                 <!-- User Profile Dropdown -->
                 <div class="relative inline-block text-left" id="user-menu-dropdown-container">
-                    <button type="button" onclick="toggleUserMenu()" class="flex items-center space-x-2 bg-white/10 border border-amber-400/50 hover:border-amber-400 text-white font-bold px-3 py-1.5 rounded-full text-xs transition-all shadow-sm focus:outline-none">
+                    <button type="button" onclick="toggleUserMenu()" class="flex items-center space-x-2 bg-gray-50 border border-gray-200 hover:border-amber-500 text-gray-900 font-bold px-3 py-1.5 rounded-full text-xs transition-all shadow-sm focus:outline-none">
                         <span class="w-6 h-6 rounded-full bg-amber-400 text-gray-950 font-extrabold flex items-center justify-center text-xs uppercase shadow-sm">
                             {{ user.username|slice:":1" }}
                         </span>
-                        <span class="hidden sm:inline text-white">{{ user.first_name|default:user.username }}</span>
-                        <i class="fa-solid fa-chevron-down text-[10px] text-amber-400 ml-0.5"></i>
+                        <span class="hidden sm:inline text-gray-900">{{ user.first_name|default:user.username }}</span>
+                        <i class="fa-solid fa-chevron-down text-[10px] text-amber-600 ml-0.5"></i>
                     </button>
 
                     <!-- Dropdown Menu Card -->
@@ -181,25 +181,25 @@
                 {% endif %}
 
                 <!-- Mobile Menu Toggle -->
-                <button onclick="toggleMobileMenu()" class="md:hidden p-2 text-gray-200 hover:text-amber-400">
+                <button onclick="toggleMobileMenu()" class="md:hidden p-2 text-gray-700 hover:text-amber-600">
                     <i class="fa-solid fa-bars text-xl"></i>
                 </button>
             </div>
         </div>
 
         <!-- Mobile Menu Drawer -->
-        <div id="mobile-menu" class="fixed inset-y-0 left-0 z-50 w-72 bg-[#121212] text-white shadow-2xl transform -translate-x-full transition-transform duration-300 md:hidden flex flex-col border-r border-gray-800">
-            <div class="p-5 flex items-center justify-between border-b border-gray-800">
-                <span class="text-xl font-black uppercase tracking-wider text-amber-400">LoomLuxe</span>
-                <button onclick="toggleMobileMenu()" class="p-2 text-gray-400 hover:text-white"><i class="fa-solid fa-xmark text-xl"></i></button>
+        <div id="mobile-menu" class="fixed inset-y-0 left-0 z-50 w-72 bg-white text-gray-900 shadow-2xl transform -translate-x-full transition-transform duration-300 md:hidden flex flex-col border-r border-gray-200">
+            <div class="p-5 flex items-center justify-between border-b border-gray-100">
+                <span class="text-xl font-black uppercase tracking-wider text-amber-600">LoomLuxe</span>
+                <button onclick="toggleMobileMenu()" class="p-2 text-gray-500 hover:text-black"><i class="fa-solid fa-xmark text-xl"></i></button>
             </div>
             <div class="flex-1 overflow-y-auto p-6 space-y-4 text-lg font-semibold">
-                <a href="{% url 'home' %}" onclick="toggleMobileMenu()" class="block py-2 border-b border-emerald-800/60 hover:text-amber-400">Home</a>
-                <a href="{% url 'about' %}" onclick="toggleMobileMenu()" class="block py-2 border-b border-emerald-800/60 hover:text-amber-400">About Us</a>
-                <a href="{% url 'shop' %}" onclick="toggleMobileMenu()" class="block py-2 border-b border-emerald-800/60 hover:text-amber-400">Products</a>
-                <a href="{% url 'contact' %}" onclick="toggleMobileMenu()" class="block py-2 border-b border-emerald-800/60 hover:text-amber-400">Contact</a>
+                <a href="{% url 'home' %}" onclick="toggleMobileMenu()" class="block py-2 border-b border-gray-100 hover:text-amber-600">Home</a>
+                <a href="{% url 'about' %}" onclick="toggleMobileMenu()" class="block py-2 border-b border-gray-100 hover:text-amber-600">About Us</a>
+                <a href="{% url 'shop' %}" onclick="toggleMobileMenu()" class="block py-2 border-b border-gray-100 hover:text-amber-600">Products</a>
+                <a href="{% url 'contact' %}" onclick="toggleMobileMenu()" class="block py-2 border-b border-gray-100 hover:text-amber-600">Contact</a>
             </div>
-            <div class="p-6 border-t border-emerald-800 bg-[#162b24]">
+            <div class="p-6 border-t border-gray-100 bg-gray-50">
                 {% if user.is_authenticated %}
                 <a href="{% url 'my_account' %}" class="block w-full bg-amber-400 text-gray-950 text-center py-3 rounded-xl font-bold">My Account</a>
                 {% else %}
