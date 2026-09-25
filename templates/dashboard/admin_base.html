@@ -143,22 +143,6 @@
             sidebar.classList.toggle('-translate-x-full');
             backdrop.classList.toggle('hidden');
         }
-
-        // Auto-dismiss admin flash messages after 1 minute (60,000ms)
-        document.addEventListener('DOMContentLoaded', function () {
-            const flashMessages = document.querySelectorAll('.django-flash-message');
-            if (flashMessages.length > 0) {
-                setTimeout(function () {
-                    flashMessages.forEach(function (msg) {
-                        msg.style.opacity = '0';
-                        msg.style.transform = 'translateY(-10px)';
-                        setTimeout(function () {
-                            msg.remove();
-                        }, 500);
-                    });
-                }, 60000);
-            }
-        });
     </script>
 </body>
 </html>

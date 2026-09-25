@@ -57,20 +57,9 @@
             <textarea name="description" rows="4" placeholder="Detailed product specifications..." class="w-full border rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-black"></textarea>
         </div>
 
-        <div class="bg-gray-50 p-5 rounded-2xl border border-gray-200 space-y-4">
-            <label class="block text-xs font-extrabold uppercase text-gray-700">Product Images</label>
-            
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-xs font-bold text-gray-600 mb-1">Option 1: Upload Image File(s)</label>
-                    <input type="file" name="images" multiple accept="image/*" class="w-full bg-white border rounded-xl p-2.5 text-xs text-gray-600 focus:outline-none focus:border-black">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-gray-600 mb-1">Option 2: Image URL / Link(s)</label>
-                    <textarea name="image_urls" rows="2" placeholder="Paste image web links (one per line, e.g. https://images.unsplash.com/...)" class="w-full bg-white border rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-black"></textarea>
-                </div>
-            </div>
-            <p class="text-[11px] text-gray-400 italic">You can upload files from your device, paste direct image URL links, or use both.</p>
+        <div>
+            <label class="block text-xs font-bold uppercase text-gray-500 mb-1">Product Images</label>
+            <input type="file" name="images" multiple accept="image/*" class="w-full border rounded-xl p-3 text-xs">
         </div>
 
         <div class="flex flex-wrap gap-4 pt-2">
