@@ -145,21 +145,37 @@ def admin_add_product(request):
             stock=request.POST.get('stock', 0),
             fabric=request.POST.get('fabric', ''),
             color=request.POST.get('color', ''),
-            brand=request.POST.get('brand', ''),
+            brand=request.POST.get('brand', 'LoomLuxe Heritage'),
             is_featured=request.POST.get('is_featured') == 'on',
             is_bestseller=request.POST.get('is_bestseller') == 'on',
             is_new_arrival=request.POST.get('is_new_arrival') == 'on',
         )
-        # Handle images
+        display_order = 0
+        # 1. Handle uploaded image files
         images = request.FILES.getlist('images')
-        for i, img in enumerate(images):
+        for img in images:
             ProductImage.objects.create(
                 product=product,
                 image=img,
-                is_primary=(i == 0),
-                display_order=i,
+                is_primary=(display_order == 0),
+                display_order=display_order,
             )
-        messages.success(request, f'Product "{product.name}" added successfully!')
+            display_order += 1
+
+        # 2. Handle image URL links (one per line or single URL)
+        image_urls = request.POST.get('image_urls', '')
+        if image_urls:
+            urls = [u.strip() for u in image_urls.splitlines() if u.strip()]
+            for url in urls:
+                ProductImage.objects.create(
+                    product=product,
+                    image=url,
+                    is_primary=(display_order == 0),
+                    display_order=display_order,
+                )
+                display_order += 1
+
+        messages.success(request, f'Product "{product.name}" created successfully!')
         return redirect('admin_products')
 
     return render(request, 'dashboard/admin_add_product.html', {'categories': categories})
@@ -171,6 +187,7 @@ def admin_edit_product(request, product_id):
     categories = Category.objects.all()
 
     if request.method == 'POST':
+        from products.models import ProductImage
         product.name = request.POST['name']
         product.category_id = request.POST['category']
         product.description = request.POST.get('description', '')
@@ -183,7 +200,38 @@ def admin_edit_product(request, product_id):
         product.is_bestseller = request.POST.get('is_bestseller') == 'on'
         product.is_new_arrival = request.POST.get('is_new_arrival') == 'on'
         product.save()
-        messages.success(request, f'Product updated!')
+
+        # Handle removing specific image
+        delete_image_id = request.POST.get('delete_image_id')
+        if delete_image_id:
+            ProductImage.objects.filter(id=delete_image_id, product=product).delete()
+
+        display_order = product.images.count()
+        # Handle uploaded image files
+        images = request.FILES.getlist('images')
+        for img in images:
+            ProductImage.objects.create(
+                product=product,
+                image=img,
+                is_primary=(display_order == 0),
+                display_order=display_order,
+            )
+            display_order += 1
+
+        # Handle image URL links
+        image_urls = request.POST.get('image_urls', '')
+        if image_urls:
+            urls = [u.strip() for u in image_urls.splitlines() if u.strip()]
+            for url in urls:
+                ProductImage.objects.create(
+                    product=product,
+                    image=url,
+                    is_primary=(display_order == 0),
+                    display_order=display_order,
+                )
+                display_order += 1
+
+        messages.success(request, f'Product "{product.name}" updated successfully!')
         return redirect('admin_products')
 
     return render(request, 'dashboard/admin_edit_product.html', {
@@ -195,9 +243,9 @@ def admin_edit_product(request, product_id):
 @admin_required
 def admin_delete_product(request, product_id):
     product = get_object_or_404(Product, id=product_id)
-    product.is_active = False
-    product.save()
-    messages.success(request, f'Product deactivated.')
+    product_name = product.name
+    product.delete()
+    messages.success(request, f'Product "{product_name}" deleted successfully.')
     return redirect('admin_products')
 
 

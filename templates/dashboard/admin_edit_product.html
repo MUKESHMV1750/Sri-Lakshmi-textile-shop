@@ -5,7 +5,7 @@
 
 {% block content %}
 <div class="bg-white p-6 sm:p-8 rounded-3xl shadow-sm border border-gray-200 max-w-3xl space-y-6">
-    <form method="POST" action="{% url 'admin_edit_product' product.id %}" class="space-y-6">
+    <form method="POST" action="{% url 'admin_edit_product' product.id %}" enctype="multipart/form-data" class="space-y-6">
         {% csrf_token %}
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
@@ -40,6 +40,38 @@
         <div>
             <label class="block text-xs font-bold uppercase text-gray-500 mb-1">Description</label>
             <textarea name="description" rows="4" class="w-full border rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-black">{{ product.description }}</textarea>
+        </div>
+
+        <!-- Existing Images & Add New Images -->
+        <div class="bg-gray-50 p-5 rounded-2xl border border-gray-200 space-y-4">
+            <label class="block text-xs font-extrabold uppercase text-gray-700">Product Images</label>
+            
+            {% if product.images.all %}
+            <div>
+                <span class="block text-xs font-bold text-gray-500 mb-2">Current Product Images:</span>
+                <div class="flex flex-wrap gap-3">
+                    {% for img in product.images.all %}
+                    <div class="relative group w-20 h-24 rounded-xl border overflow-hidden bg-white shadow-sm">
+                        <img src="{{ img.image_url }}" alt="Product Image" class="w-full h-full object-cover">
+                        {% if img.is_primary %}
+                        <span class="absolute top-1 left-1 bg-amber-500 text-black text-[9px] font-bold px-1.5 py-0.5 rounded">Primary</span>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-gray-200">
+                <div>
+                    <label class="block text-xs font-bold text-gray-600 mb-1">Option 1: Upload Image File(s)</label>
+                    <input type="file" name="images" multiple accept="image/*" class="w-full bg-white border rounded-xl p-2.5 text-xs text-gray-600 focus:outline-none focus:border-black">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-600 mb-1">Option 2: Image URL / Link(s)</label>
+                    <textarea name="image_urls" rows="2" placeholder="Paste image web links (one per line, e.g. https://images.unsplash.com/...)" class="w-full bg-white border rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-black"></textarea>
+                </div>
+            </div>
         </div>
 
         <div class="flex flex-wrap gap-4 pt-2">
