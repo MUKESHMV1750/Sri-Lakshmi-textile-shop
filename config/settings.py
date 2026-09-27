@@ -22,11 +22,11 @@ if RENDER_EXTERNAL_HOSTNAME:
     if RENDER_EXTERNAL_HOSTNAME not in ALLOWED_HOSTS:
         ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
 
-CSRF_TRUSTED_ORIGINS_ENV = config('CSRF_TRUSTED_ORIGINS', default='https://sri-lakshmi-textile-shop.onrender.com/')
-CSRF_TRUSTED_ORIGINS = [o.strip() for o in CSRF_TRUSTED_ORIGINS_ENV.split(',') if o.strip()]
+CSRF_TRUSTED_ORIGINS_ENV = config('CSRF_TRUSTED_ORIGINS', default='https://*.onrender.com,https://sri-lakshmi-textile-shop.onrender.com')
+CSRF_TRUSTED_ORIGINS = [o.strip().rstrip('/') for o in CSRF_TRUSTED_ORIGINS_ENV.split(',') if o.strip()]
 
 if RENDER_EXTERNAL_HOSTNAME:
-    render_origin = f'https://{RENDER_EXTERNAL_HOSTNAME}'
+    render_origin = f'https://{RENDER_EXTERNAL_HOSTNAME}'.rstrip('/')
     if render_origin not in CSRF_TRUSTED_ORIGINS:
         CSRF_TRUSTED_ORIGINS.append(render_origin)
 
