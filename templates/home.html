@@ -15,13 +15,13 @@
                 <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
             </div>
             <div class="relative z-10 text-center max-w-3xl mx-auto px-4 py-20">
-                <span class="inline-block py-1 px-3.5 rounded-full bg-white/20 backdrop-blur-md text-xs font-semibold tracking-wider uppercase mb-4 text-gray-200">{{ banner.badge|default:"New Collection 2026" }}</span>
+                <span class="inline-block py-1 px-3.5 rounded-full bg-white/20 backdrop-blur-md text-xs font-semibold tracking-wider uppercase mb-4 text-gray-200">{{ banner.badge|default:'New Collection 2026' }}</span>
                 <h1 class="text-4xl sm:text-6xl font-extrabold tracking-tight mb-6">{{ banner.title }}</h1>
                 <p class="text-base sm:text-lg text-gray-300 mb-8 max-w-xl mx-auto font-light leading-relaxed">
                     {{ banner.subtitle }}
                 </p>
                 <div class="flex flex-wrap justify-center gap-4">
-                    <a href="{{ banner.link_url|default:'/shop/' }}" class="bg-white text-black font-semibold px-8 py-4 rounded-full shadow-lg hover:bg-gray-100 transition-all transform hover:-translate-y-0.5">{{ banner.button_text|default:"Shop Now" }}</a>
+                    <a href="{{ banner.link_url|default:'/shop/' }}" class="bg-white text-black font-semibold px-8 py-4 rounded-full shadow-lg hover:bg-gray-100 transition-all transform hover:-translate-y-0.5">{{ banner.button_text|default:'Shop Now' }}</a>
                     <a href="#collections" class="bg-white/10 hover:bg-white/20 backdrop-blur-md text-white border border-white/30 font-semibold px-8 py-4 rounded-full transition-all">Explore Collections</a>
                 </div>
             </div>
@@ -64,9 +64,16 @@
     <!-- Product Grid -->
     <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
         {% for product in featured_products %}
-        <div class="product-item-card group bg-white rounded-3xl p-4 border border-gray-100 shadow-sm hover:shadow-md transition-all flex flex-col justify-between" data-category="{{ product.category.slug }}">
+        <div class="product-item-card group bg-white rounded-3xl p-4 border border-gray-100 shadow-sm hover:shadow-md transition-all flex flex-col justify-between"
+             data-category="{{ product.category.slug }}"
+             data-id="{{ product.id }}"
+             data-title="{{ product.name }}"
+             data-price="₹{{ product.effective_price }}"
+             data-img="{{ product.primary_image.image_url }}"
+             data-desc="{{ product.short_description|default:product.description }}"
+             data-catname="{{ product.category.name }}">
             <div>
-                <div class="relative bg-gray-100 rounded-2xl overflow-hidden mb-4 h-72 cursor-pointer" onclick="openProductModal('{{ product.id }}', '{{ product.name|escapejs }}', '₹{{ product.effective_price }}', '{{ product.primary_image.image_url|default:"" }}', '{{ product.short_description|default:product.description|escapejs }}', '{{ product.category.name|escapejs }}')">
+                <div class="relative bg-gray-100 rounded-2xl overflow-hidden mb-4 h-72 cursor-pointer" onclick="openModalFromCard(this)">
                     {% if product.primary_image %}
                     <img src="{{ product.primary_image.image_url }}" alt="{{ product.name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                     {% else %}
@@ -83,7 +90,7 @@
                         <i class="fa-regular fa-heart text-gray-700"></i>
                     </button>
                 </div>
-                <h3 class="font-bold text-base mb-1 cursor-pointer hover:underline" onclick="openProductModal('{{ product.id }}', '{{ product.name|escapejs }}', '₹{{ product.effective_price }}', '{{ product.primary_image.image_url|default:"" }}', '{{ product.short_description|default:product.description|escapejs }}', '{{ product.category.name|escapejs }}')">{{ product.name }}</h3>
+                <h3 class="font-bold text-base mb-1 cursor-pointer hover:underline" onclick="openModalFromCard(this)">{{ product.name }}</h3>
                 <p class="text-xs text-gray-400 uppercase tracking-wider mb-2">{{ product.category.name }}</p>
             </div>
             <div class="flex items-center justify-between pt-2">
@@ -276,6 +283,19 @@
                 item.style.display = 'none';
             }
         });
+    }
+
+    function openModalFromCard(el) {
+        const card = el.closest('.product-item-card');
+        if (!card) return;
+        openProductModal(
+            card.dataset.id,
+            card.dataset.title,
+            card.dataset.price,
+            card.dataset.img,
+            card.dataset.desc,
+            card.dataset.catname
+        );
     }
 
     function openProductModal(id, title, price, img, desc, category) {

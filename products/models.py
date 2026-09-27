@@ -95,6 +95,12 @@ class Product(models.Model):
         return self.sale_price if self.sale_price else self.price
 
     @property
+    def savings_amount(self):
+        if self.sale_price and self.price > self.sale_price:
+            return self.price - self.sale_price
+        return 0
+
+    @property
     def in_stock(self):
         return self.stock > 0
 

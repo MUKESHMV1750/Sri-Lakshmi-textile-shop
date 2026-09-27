@@ -10,5 +10,7 @@ whitenoise==6.7.0
 PyJWT>=2.8.0
 cryptography>=42.0.0
 setuptools
+dj-database-url==2.2.0
+
 
 

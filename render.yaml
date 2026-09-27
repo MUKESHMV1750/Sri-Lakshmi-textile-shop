@@ -1,7 +1,7 @@
 services:
   - type: web
     name: Sri-Lakshmi-textile-shop
-    env: python
+    runtime: python
     buildCommand: "./build.sh"
     startCommand: "gunicorn config.wsgi:application"
     envVars:
@@ -9,5 +9,20 @@ services:
         value: 3.12.8
       - key: DEBUG
         value: "False"
+      - key: SECRET_KEY
+        generateValue: true
       - key: ALLOWED_HOSTS
         value: "*"
+      - key: CSRF_TRUSTED_ORIGINS
+        value: "https://*.onrender.com"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: sri-lakshmi-db
+          property: connectionString
+
+databases:
+  - name: sri-lakshmi-db
+    databaseName: sri_lakshmi_db
+    user: sri_lakshmi_user
+    plan: free
+
