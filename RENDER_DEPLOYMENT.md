@@ -15,7 +15,7 @@ This project is fully configured for deployment on [Render](https://render.com/)
 3. **`config/urls.py`**: Media files serving enabled in production for uploaded media assets.
 4. **`Procfile`**: Specifies Gunicorn WSGI server startup command:
    ```text
-   web: gunicorn config.wsgi:application
+   web: gunicorn --bind 0.0.0.0:$PORT config.wsgi:application
    ```
 5. **`build.sh`**: Automatic build script executing pip install, static collection, and database migrations:
    ```bash
@@ -71,7 +71,7 @@ If you prefer creating services manually:
    - Connect your repository.
    - **Environment**: Python 3
    - **Build Command**: `./build.sh`
-   - **Start Command**: `gunicorn config.wsgi:application`
+   - **Start Command**: `gunicorn --bind 0.0.0.0:$PORT config.wsgi:application`
 
 3. **Set Environment Variables**:
    In your Web Service **Environment** tab, add:

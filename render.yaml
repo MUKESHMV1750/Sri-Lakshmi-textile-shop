@@ -3,7 +3,7 @@ services:
     name: Sri-Lakshmi-textile-shop
     runtime: python
     buildCommand: "./build.sh"
-    startCommand: "gunicorn config.wsgi:application"
+    startCommand: "gunicorn --bind 0.0.0.0:$PORT config.wsgi:application"
     envVars:
       - key: PYTHON_VERSION
         value: 3.12.8
