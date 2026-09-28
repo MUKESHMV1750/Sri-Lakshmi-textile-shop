@@ -15,7 +15,7 @@ This project is fully configured for deployment on [Render](https://render.com/)
 3. **`config/urls.py`**: Media files serving enabled in production for uploaded media assets.
 4. **`Procfile`**: Specifies Gunicorn WSGI server startup command:
    ```text
-   web: gunicorn --bind 0.0.0.0:$PORT config.wsgi:application
+   web: gunicorn --bind 0.0.0.0:$PORT --workers 2 --threads 4 --timeout 120 config.wsgi:application
    ```
 5. **`build.sh`**: Automatic build script executing pip install, static collection, and database migrations:
    ```bash
